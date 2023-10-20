@@ -13,10 +13,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.Calendar;
+import javax.swing.*;
+import java.awt.*;
 
 
-
-public class source {
+public class source extends JFrame {
 	String url = "jdbc:postgresql://127.0.0.1:5432/minsu";
 	String username = "minsu";
 	String pswd = "minsu";
@@ -67,7 +68,6 @@ public class source {
     	}
     	
 	void mainpage(int userID){
-	
 		//view calender UI
 		Scanner in = new Scanner(System.in);
 		source db = new source();
@@ -329,8 +329,8 @@ public class source {
 		db.mainpage(userID);
 		
 	}
-	
 	void view_calendar(int userID){
+		
 		LocalDateTime now = LocalDateTime.now();
 		int year = now.getYear();
 		int month = now.getMonthValue();
@@ -339,18 +339,49 @@ public class source {
 		int minute = now.getMinute();
 		int second = now.getSecond();
 		
-		Calendar cal = Calendar.getInstance();
 		
-     		System.out.println("\t\t\t"+ month );
-     		System.out.printf("SUN\tMON\tTUE\tWED\tTHR\tFRI\tSAT\n");
-     		
-         	cal.set(year, month-1, 1);
-          	
+		Calendar cal = Calendar.getInstance();
+		setTitle("Calendar");
+		setSize(500,250);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		JPanel main_panel = new JPanel();
+		GridLayout grid = new GridLayout(7,7);
+		grid.setVgap(5);
+		setLayout(grid);
+		add(new JLabel(" "));
+		add(new JLabel(" "));
+		add(new JLabel(" "));
+		
+		String str1 = Integer.toString(month);
+		JLabel lb_text1 = new JLabel();
+		lb_text1.setText(str1);
+		add(lb_text1);
+		add(new JLabel(" "));
+		add(new JLabel(" "));
+		add(new JLabel(" "));
+		
+		add(new JLabel("SUN"));
+		add(new JLabel("MON"));
+		add(new JLabel("TUE"));
+		add(new JLabel("WED"));
+		add(new JLabel("THR"));
+		add(new JLabel("FRI"));
+		add(new JLabel("SAT"));
+		cal.set(year, month-1, 1);
           	int start = cal.get(Calendar.DAY_OF_WEEK);
               
-          	for(int i=1; i<start; i++) {
-              		System.out.print("\t");
+          	for(int i=1; i<start; i++) add(new JLabel(" "));
+          	for(int i=1;i<=cal.getActualMaximum(Calendar.DATE);i++){
+              		String t = Integer.toString(i);
+              		add(new JLabel(t));
+              		if(start%7 == 0) {
+              			System.out.println();
+              		}
+              		start++;
               	}
+		setVisible(true);
+     		
+         	
               	
               	for(int i=1;i<=cal.getActualMaximum(Calendar.DATE);i++){
               		System.out.printf("%d\t", i);
