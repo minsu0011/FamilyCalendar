@@ -1,0 +1,85 @@
+CREATE TABLE USER_ENTITY (
+	user_id integer NOT NULL PRIMARY KEY,
+	name varchar(20) NOT NULL,
+	pwd varchar(20) NOT NULL,
+	email varchar(20) NOT NULL,
+	reminder_default integer NOT NULL);
+CREATE TABLE EVENT1 (
+	event_id integer NOT NULL PRIMARY KEY,
+	host_id integer NOT NULL,
+	ev_name varchar(100) NOT NULL,
+	description varchar(200) NOT NULL,
+	start_time TIMESTAMP NOT NULL,
+	end_time TIMESTAMP NOT NULL,
+	ev_location varchar(100) NOT NULL,
+	FOREIGN KEY(host_id) REFERENCES USER_ENTITY(user_id));
+CREATE TABLE CALENDAR_EVENT (
+	user_id integer NOT NULL,
+	event_id integer NOT NULL,
+	role char(1) NOT NULL,
+	reminder integer NOT NULL,
+	FOREIGN KEY(user_id) REFERENCES USER_ENTITY(user_id),
+	FOREIGN KEY(event_id) REFERENCES EVENT1(event_id));
+CREATE TABLE MESSAGE_BOX1 (
+	msg_id integer NOT NULL PRIMARY KEY,
+	receiver_id integer NOT NULL,
+	msg_type integer NOT NULL,
+	FOREIGN KEY(receiver_id) REFERENCES USER_ENTITY(user_id));
+CREATE TABLE NOTIFICATION_MODIFIED (
+	msg_id integer NOT NULL,
+	receiver_id integer NOT NULL,
+	sender_id integer NOT NULL, 
+	event_id integer NOT NULL,
+	FOREIGN KEY(event_id) REFERENCES EVENT1(event_id),
+	FOREIGN KEY(receiver_id) REFERENCES USER_ENTITY(user_id),
+	FOREIGN KEY(sender_id) REFERENCES USER_ENTITY(user_id),
+	FOREIGN KEY(msg_id) REFERENCES MESSAGE_BOX1(msg_id));
+CREATE TABLE NOTIFICATION_CANCELED (
+	msg_id integer NOT NULL,
+	receiver_id integer NOT NULL,
+	sender_id integer NOT NULL, 
+	ev_name varchar(100) NOT NULL,
+	description varchar(200) NOT NULL,
+	start_time TIMESTAMP NOT NULL,
+	end_time TIMESTAMP NOT NULL,
+	FOREIGN KEY(receiver_id) REFERENCES USER_ENTITY(user_id),
+	FOREIGN KEY(sender_id) REFERENCES USER_ENTITY(user_id),
+	FOREIGN KEY(msg_id) REFERENCES MESSAGE_BOX1(msg_id));
+CREATE TABLE INVITATION (
+	msg_id integer NOT NULL,
+	receiver_id integer NOT NULL,
+	event_id integer NOT NULL,
+	participants varchar(20)[] NOT NULL,
+	FOREIGN KEY(receiver_id) REFERENCES USER_ENTITY(user_id),
+	FOREIGN KEY(event_id) REFERENCES EVENT1(event_id),
+	FOREIGN KEY(msg_id) REFERENCES MESSAGE_BOX1(msg_id));
+CREATE TABLE PERMISSION_CANCEL (
+	msg_id integer NOT NULL,
+	receiver_id integer NOT NULL,
+	sender_id integer NOT NULL, 
+	event_id integer NOT NULL,
+	FOREIGN KEY(event_id) REFERENCES EVENT1(event_id),
+	FOREIGN KEY(receiver_id) REFERENCES USER_ENTITY(user_id),
+	FOREIGN KEY(sender_id) REFERENCES USER_ENTITY(user_id),
+	FOREIGN KEY(msg_id) REFERENCES MESSAGE_BOX1(msg_id));
+CREATE TABLE PERMISSION_MODIFY (
+	msg_id integer NOT NULL,
+	receiver_id integer NOT NULL,
+	sender_id integer NOT NULL, 
+	event_id integer NOT NULL,
+	host_id integer NOT NULL,
+	ev_name varchar(100) NOT NULL,
+	description varchar(200) NOT NULL,
+	start_time TIMESTAMP NOT NULL,
+	end_time TIMESTAMP NOT NULL,
+	participants varchar(20)[] NOT NULL,
+	FOREIGN KEY(event_id) REFERENCES EVENT1(event_id),
+	FOREIGN KEY(receiver_id) REFERENCES USER_ENTITY(user_id),
+	FOREIGN KEY(sender_id) REFERENCES USER_ENTITY(user_id),
+	FOREIGN KEY(msg_id) REFERENCES MESSAGE_BOX1(msg_id));
+CREATE TABLE REMINDER (
+	user_id integer NOT NULL,
+	event_id integer NOT NULL,
+	time_remaining integer NOT NULL,
+	FOREIGN KEY(event_id) REFERENCES EVENT1(event_id),
+	FOREIGN KEY(user_id) REFERENCES USER_ENTITY(user_id));
